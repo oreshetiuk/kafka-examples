@@ -1,5 +1,7 @@
 package com.oreshetiuk.kafkaexamples.ruleresultaggregator.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class AggregatedRuleResult(
         var candidate: Candidate = Candidate(),
         val matchedRules: MutableList<RuleResult> = ArrayList()
@@ -11,7 +13,8 @@ data class AggregatedRuleResult(
         return this
     }
 
-    fun getAllActionsMatchedRules() : List<Action> {
-       return matchedRules.filter { it.matched }.flatMap { it.rule.actions!! }
+    @JsonIgnore
+    fun getAllActionsOfMatchedRules() : List<Action> {
+       return matchedRules.filter { it.matched }.flatMap { it.rule.actions }
     }
 }

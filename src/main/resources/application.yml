@@ -1,6 +1,6 @@
 spring:
   application:
-    name: kafka-streams-aggregate-sample4
+    name: kafka-streams-aggregate-sample1
   cloud:
     stream:
       function:
@@ -12,11 +12,11 @@ spring:
               default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
               default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
               commit.interval.ms: 1000
-          bindings:
-            aggregateRuleResult-in-0:
-              clientId: aggregate-rule-result-consumer
-            aggregateActionResult-in-0:
-              clientId: aggregate-action-result-consumer
+#          bindings:
+#            aggregateRuleResult-in-0:
+#              clientId: aggregate-rule-result-consumer
+#            aggregateActionResult-in-0:
+#              clientId: aggregate-action-result-consumer
       bindings:
         aggregateRuleResult-in-0:
           destination: rule-engine.execution.result
@@ -25,3 +25,7 @@ spring:
 
         aggregateActionResult-in-0:
           destination: rule-engine.action.result
+        aggregateActionResult-in-1:
+          destination: rule-engine.aggregated-rule-result
+        aggregateActionResult-out-0:
+          destination: rule-engine.aggregated-action-result

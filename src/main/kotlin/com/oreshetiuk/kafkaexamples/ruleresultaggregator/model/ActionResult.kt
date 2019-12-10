@@ -2,10 +2,10 @@ package com.oreshetiuk.kafkaexamples.ruleresultaggregator.model
 
 
 data class ActionResult (
-    var action: Action ?= null,
-    var rule: Rule ?= null,
-    var candidate: Candidate ?= null,
-    var actionResultStatus: ActionResultStatus ?= null
+    var action: Action,
+    var rule: Rule,
+    var candidate: Candidate,
+    var actionResultStatus: ActionResultStatus
 )
 
 enum class ActionResultStatus {

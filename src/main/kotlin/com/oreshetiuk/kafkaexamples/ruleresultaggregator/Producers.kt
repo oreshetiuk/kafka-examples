@@ -1,4 +1,4 @@
-package com.oreshetiuk.kafkaexamples
+package com.oreshetiuk.kafkaexamples.ruleresultaggregator
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.oreshetiuk.kafkaexamples.ruleresultaggregator.model.*
@@ -28,9 +28,9 @@ object Producers {
 
         val rule1 = Rule("rule-1", listOf(Action("action-1"), Action("action-2")))
         val rule2 = Rule("rule-2", listOf(Action("action-3")))
-        val candidate = Candidate("transfer-3", listOf(rule1, rule2))
+        val candidate = Candidate("transfer-9", listOf(rule1, rule2))
 
-        sendRuleResult(rule1, candidate, rule2, props)
+//        sendRuleResult(rule1, candidate, rule2, props)
 
 //        ----
 
@@ -38,7 +38,7 @@ object Producers {
         props[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         props[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = actionResultSerde.serializer().javaClass
 
-//        sendActionResult(props, rule1, candidate, rule2)
+        sendActionResult(props, rule1, candidate, rule2)
 
     }
 
@@ -46,13 +46,14 @@ object Producers {
         val templateAR = KafkaTemplate(DefaultKafkaProducerFactory<String, ActionResult>(props), true)
 
         val actionResults = listOf(
-                ActionResult(rule1.actions?.get(0), rule1, candidate, ActionResultStatus.REJECT),
-                ActionResult(rule1.actions?.get(1), rule1, candidate, ActionResultStatus.FALLBACK),
-                ActionResult(rule2.actions?.get(0), rule2, candidate, ActionResultStatus.NOT_APPLICABLE)
+                ActionResult(rule1.actions[0], rule1, candidate, ActionResultStatus.REJECT),
+                ActionResult(rule1.actions[1], rule1, candidate, ActionResultStatus.FALLBACK)
+//,
+//                ActionResult(rule2.actions[0], rule2, candidate, ActionResultStatus.NOT_APPLICABLE)
         )
 
 
-        actionResults.forEach { templateAR.send("rule.engine.action.result", it.candidate?.transferId!!, it) }
+        actionResults.forEach { templateAR.send("rule-engine.action.result", it.candidate.transferId, it) }
     }
 
     private fun sendRuleResult(rule1: Rule, candidate: Candidate, rule2: Rule, props: MutableMap<String, Any>) {
@@ -63,6 +64,6 @@ object Producers {
 
         val templateRR = KafkaTemplate(DefaultKafkaProducerFactory<String, RuleResult>(props), true)
 
-        ruleResults.forEach { templateRR.send("rule-engine.execution.result", it.candidate?.transferId!!, it) }
+        ruleResults.forEach { templateRR.send("rule-engine.execution.result", it.candidate.transferId, it) }
     }
 }
